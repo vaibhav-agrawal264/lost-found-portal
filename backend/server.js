@@ -76,7 +76,7 @@ io.on("connection", (socket) => {
       }
     */
 
-    io.to(data.conversationId).emit("receiveMessage", data);
+    socket.to(data.conversationId).emit("receiveMessage", data);
 
   });
 
