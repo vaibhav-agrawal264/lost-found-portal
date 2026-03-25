@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
 import { useParams } from "react-router-dom";
 
-const socket = io("http://localhost:5000");
+const socket = io(process.env.REACT_APP_API_URL, { withCredentials: true });
 
 function ChatPage() {
 
@@ -12,43 +12,46 @@ function ChatPage() {
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
 
+  const bottomRef = useRef();
+
+  // ✅ Fetch messages
+  const fetchMessages = async () => {
+    try {
+      const res = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/messages/${conversationId}`,
+        { withCredentials: true }
+      );
+      setMessages(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // ✅ Main useEffect (fixed dependencies)
   useEffect(() => {
+
+    if (!conversationId) return;
 
     fetchMessages();
 
     socket.emit("joinConversation", conversationId);
 
     socket.on("receiveMessage", (data) => {
-
       setMessages((prev) => [...prev, data]);
-
     });
 
     return () => {
       socket.off("receiveMessage");
     };
 
-  }, []);
+  }, [conversationId]);
 
-  const fetchMessages = async () => {
+  // ✅ Auto scroll to bottom
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
-    try {
-
-      const res = await axios.get(
-        `http://localhost:5000/api/messages/${conversationId}`,
-        { withCredentials: true }
-      );
-
-      setMessages(res.data);
-
-    } catch (error) {
-
-      console.log(error);
-
-    }
-
-  };
-
+  // ✅ Send message
   const sendMessage = async () => {
 
     if (!text) return;
@@ -56,7 +59,7 @@ function ChatPage() {
     try {
 
       const res = await axios.post(
-        "http://localhost:5000/api/messages",
+        `${process.env.REACT_APP_API_URL}/api/messages`,
         {
           conversationId,
           text
@@ -71,14 +74,12 @@ function ChatPage() {
         ...message
       });
 
+      setMessages((prev) => [...prev, message]);
       setText("");
 
     } catch (error) {
-
       console.log(error);
-
     }
-
   };
 
   return (
@@ -89,17 +90,20 @@ function ChatPage() {
 
       <div className="border rounded p-4 h-96 overflow-y-scroll mb-4">
 
-        {messages.map((msg, index) => (
+        {messages.map((msg) => (
 
-          <div key={index} className="mb-2">
+          <div key={msg._id} className="mb-2">
 
-            <span className="font-semibold">{msg.sender}</span>:
+            <span className="font-semibold">{msg.sender?.name}</span>:
 
             <span className="ml-2">{msg.text}</span>
 
           </div>
 
         ))}
+
+        {/* ✅ Scroll anchor */}
+        <div ref={bottomRef}></div>
 
       </div>
 

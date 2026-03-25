@@ -36,6 +36,7 @@ const ItemSchema = new mongoose.Schema({
 
   status: {
     type: String,
+    enum: ["open", "active", "resolved"],
     default: "open"
   },
 
@@ -46,12 +47,8 @@ const ItemSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required:true
-  },
-  status: {
-  type: String,
-  default: "active"
-}
+    required: true
+  }
 
 });
 

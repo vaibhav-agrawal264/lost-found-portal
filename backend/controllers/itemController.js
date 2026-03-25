@@ -8,6 +8,22 @@ exports.createItem = async (req, res) => {
 
     const { title, description, category, type, location } = req.body;
 
+    if (!title || typeof title !== "string" || !title.trim()) {
+      return res.status(400).json({ message: "title is required" });
+    }
+
+    if (!description || typeof description !== "string" || !description.trim()) {
+      return res.status(400).json({ message: "description is required" });
+    }
+
+    if (!type || (type !== "lost" && type !== "found")) {
+      return res.status(400).json({ message: "type must be 'lost' or 'found'" });
+    }
+
+    if (!location || typeof location !== "string" || !location.trim()) {
+      return res.status(400).json({ message: "location is required" });
+    }
+
     const imageUrl = req.file ? req.file.path : null;
 
     const newItem = new Item({

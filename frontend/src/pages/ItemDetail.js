@@ -11,7 +11,7 @@ function ItemDetail() {
   useEffect(() => {
 
     axios
-      .get("http://localhost:5000/api/auth/check", {
+      .get(`${process.env.REACT_APP_API_URL}/api/auth/check`, {
         withCredentials: true
       })
       .then((res) => {
@@ -20,7 +20,7 @@ function ItemDetail() {
       .catch(() => { });
 
     axios
-      .get(`http://localhost:5000/api/items/${id}`)
+      .get(`${process.env.REACT_APP_API_URL}/api/items/${id}`)
       .then((res) => setItem(res.data))
       .catch((err) => console.log(err));
 
@@ -35,7 +35,7 @@ function ItemDetail() {
     try {
 
       await axios.put(
-        `http://localhost:5000/api/items/${item._id}/resolve`,
+        `${process.env.REACT_APP_API_URL}/api/items/${item._id}/resolve`,
         {},
         { withCredentials: true }
       );
@@ -61,7 +61,7 @@ function ItemDetail() {
     try {
 
       await axios.delete(
-        `http://localhost:5000/api/items/${item._id}`,
+        `${process.env.REACT_APP_API_URL}/api/items/${item._id}`,
         { withCredentials: true }
       );
 
@@ -82,7 +82,7 @@ function ItemDetail() {
     try {
 
       const res = await axios.post(
-        "http://localhost:5000/api/conversations",
+        `${process.env.REACT_APP_API_URL}/api/conversations`,
         {
           itemId: item._id,
           ownerId: item.user
@@ -109,7 +109,7 @@ function ItemDetail() {
         <img
           src={item.imageUrl}
           alt="item"
-          className="w-full h-64 object-cover rounded mb-6"
+          className="w-full h-auto max-h-96 object-contain rounded mb-6 bg-white"
         />
       )}
 

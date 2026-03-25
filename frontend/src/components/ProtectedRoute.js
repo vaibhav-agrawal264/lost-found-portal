@@ -9,7 +9,7 @@ function ProtectedRoute({ children }) {
   useEffect(() => {
 
     axios
-      .get("http://localhost:5000/api/auth/check", {
+      .get(`${process.env.REACT_APP_API_URL}/api/auth/check`, {
         withCredentials: true
       })
       .then(() => setAuthenticated(true))

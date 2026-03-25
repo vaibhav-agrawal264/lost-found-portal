@@ -11,7 +11,7 @@ function Navbar() {
   useEffect(() => {
 
     axios
-      .get("http://localhost:5000/api/auth/check", {
+      .get(`${process.env.REACT_APP_API_URL}/api/auth/check`, {
         withCredentials: true
       })
       .then(() => setIsAuthenticated(true))
@@ -22,7 +22,7 @@ function Navbar() {
   const handleLogout = async () => {
 
     await axios.post(
-      "http://localhost:5000/api/auth/logout",
+      `${process.env.REACT_APP_API_URL}/api/auth/logout`,
       {},
       { withCredentials: true }
     );
@@ -61,12 +61,21 @@ function Navbar() {
         )}
 
         {isAuthenticated && (
-          <button
-            onClick={handleLogout}
-            className="text-red-600 hover:text-red-800"
-          >
-            Logout
-          </button>
+          <>
+            <Link
+              to="/messages"
+              className="text-gray-700 hover:text-blue-600"
+            >
+              Messages
+            </Link>
+
+            <button
+              onClick={handleLogout}
+              className="text-red-600 hover:text-red-800"
+            >
+              Logout
+            </button>
+          </>
         )}
 
       </div>

@@ -17,7 +17,7 @@ function Home() {
 
       try {
 
-        const res = await axios.get("http://localhost:5000/api/items/all");
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/items/all`);
 
         setItems(res.data);
         setLoading(false);
@@ -121,7 +121,7 @@ function Home() {
                   <img
                     src={item.imageUrl}
                     alt="item"
-                    className="w-full h-48 object-cover"
+                    className="w-full h-48 object-contain bg-white"
                   />
 
                   <span

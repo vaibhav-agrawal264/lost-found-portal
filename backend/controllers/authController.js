@@ -66,14 +66,22 @@ exports.loginUser = async (req, res) => {
     // generate token
     const token = jwt.sign(
       { id: user._id },
-      "secretkey",
-      { expiresIn: "1d" }
+      process.env.JWT_SECRET || "secretkey",
+      { expiresIn: process.env.JWT_LIFETIME || "1d" }
     );
+
+    const isProd = process.env.NODE_ENV === "production";
+    const cookieSecure =
+      process.env.COOKIE_SECURE !== undefined
+        ? process.env.COOKIE_SECURE === "true"
+        : isProd;
+    const cookieSameSite =
+      process.env.COOKIE_SAMESITE || (isProd ? "none" : "lax");
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false, // true in production
-      sameSite: "lax",
+      secure: cookieSecure,
+      sameSite: cookieSameSite,
       maxAge: 24 * 60 * 60 * 1000
     }).json({
       message: "Login successful"
@@ -88,8 +96,10 @@ exports.logoutUser = (req, res) => {
 
   res.clearCookie("token", {
     httpOnly: true,
-    sameSite: "lax",
-    secure: false
+    sameSite: process.env.COOKIE_SAMESITE || (process.env.NODE_ENV === "production" ? "none" : "lax"),
+    secure: process.env.COOKIE_SECURE !== undefined
+      ? process.env.COOKIE_SECURE === "true"
+      : process.env.NODE_ENV === "production"
   });
 
   res.json({

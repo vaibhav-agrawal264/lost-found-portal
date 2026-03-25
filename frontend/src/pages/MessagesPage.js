@@ -13,7 +13,7 @@ export default function MessagesPage() {
     const fetchConversations = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:5000/api/conversations/all",
+          `${process.env.REACT_APP_API_URL}/api/conversations/all`,
           { withCredentials: true }
         );
         setConversations(res.data);
