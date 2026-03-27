@@ -15,9 +15,11 @@ const { Server } = require("socket.io");
 
 const app = express();
 
+const clientOrigin = (process.env.CLIENT_ORIGIN || "http://localhost:3000").replace(/\/$/, "");
+
 /* Middleware */
 app.use(cors({
-  origin: process.env.CLIENT_ORIGIN || "http://localhost:3000",
+  origin: clientOrigin,
   credentials: true
 }));
 
@@ -75,7 +77,7 @@ const server = http.createServer(app);
 /* Socket.IO Setup */
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_ORIGIN || "http://localhost:3000",
+    origin: clientOrigin,
     methods: ["GET", "POST"],
     credentials: true
   }
