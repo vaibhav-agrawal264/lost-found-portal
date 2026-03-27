@@ -14,23 +14,22 @@ function ChatPage() {
 
   const bottomRef = useRef();
 
-  // ✅ Fetch messages
-  const fetchMessages = async () => {
-    try {
-      const res = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/messages/${conversationId}`,
-        { withCredentials: true }
-      );
-      setMessages(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   // ✅ Main useEffect (fixed dependencies)
   useEffect(() => {
 
     if (!conversationId) return;
+
+    const fetchMessages = async () => {
+      try {
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}/api/messages/${conversationId}`,
+          { withCredentials: true }
+        );
+        setMessages(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
     fetchMessages();
 
@@ -56,10 +55,6 @@ function ChatPage() {
     const markAsRead = async () => {
       if (!conversationId || messages.length === 0) return;
 
-      const hasUnreadOthers = messages.some(
-        (m) => m.sender?._id !== localStorage.getItem("userId") // Rough check
-      );
-
       try {
         await axios.put(
           `${process.env.REACT_APP_API_URL}/api/messages/mark-read/${conversationId}`,
@@ -73,7 +68,7 @@ function ChatPage() {
     };
     
     markAsRead();
-  }, [messages.length, conversationId]);
+  }, [messages, conversationId]);
 
   // ✅ Send message
   const sendMessage = async () => {
