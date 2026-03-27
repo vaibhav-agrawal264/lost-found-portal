@@ -100,6 +100,7 @@ io.on("connection", (socket) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || "secretkey");
     socket.userId = decoded.id;
+    socket.join(socket.userId); // Join personal room for notifications
   } catch (err) {
     socket.disconnect(true);
     return;
@@ -146,6 +147,14 @@ io.on("connection", (socket) => {
       if (!conversation) return;
 
       socket.to(data.conversationId).emit("receiveMessage", data);
+
+      // Emit notification to other participants
+      const otherParticipants = conversation.participants.filter(
+        p => p.toString() !== socket.userId.toString()
+      );
+      otherParticipants.forEach(p => {
+        socket.to(p.toString()).emit("newMessageNotification", data);
+      });
     } catch (err) {
       // Ignore relay failures
     }

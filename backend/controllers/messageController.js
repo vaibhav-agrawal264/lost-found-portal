@@ -79,3 +79,55 @@ exports.getMessages = async (req, res) => {
   }
 
 };
+
+exports.getUnreadCount = async (req, res) => {
+  try {
+    const userConversations = await Conversation.find({
+      participants: req.user.id
+    }).distinct('_id');
+
+    const unreadCount = await Message.countDocuments({
+      conversation: { $in: userConversations },
+      sender: { $ne: req.user.id },
+      readBy: { $ne: req.user.id }
+    });
+
+    res.json({ count: unreadCount });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.markAsRead = async (req, res) => {
+  try {
+    const { conversationId } = req.params;
+
+    if (!conversationId) {
+      return res.status(400).json({ message: "conversationId is required" });
+    }
+
+    const conversation = await Conversation.findOne({
+      _id: conversationId,
+      participants: req.user.id
+    });
+
+    if (!conversation) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    await Message.updateMany(
+      {
+        conversation: conversationId,
+        sender: { $ne: req.user.id },
+        readBy: { $ne: req.user.id }
+      },
+      {
+        $push: { readBy: req.user.id }
+      }
+    );
+
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};

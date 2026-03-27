@@ -79,6 +79,11 @@ function ItemDetail() {
 
   const startChat = async () => {
 
+    if (!currentUser) {
+      navigate('/login');
+      return;
+    }
+
     try {
 
       const res = await axios.post(
