@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
@@ -8,6 +7,8 @@ import Register from "./pages/Register";
 import PostItem from "./pages/PostItem";
 import ItemDetail from "./pages/ItemDetail";
 import ChatPage from "./pages/ChatPage";
+import MessagesPage from "./pages/MessagesPage";
+
 function App() {
   return (
     <Router>
@@ -23,6 +24,12 @@ function App() {
         </ProtectedRoute>} />
         <Route path="/item/:id" element={<ItemDetail />} />
         <Route path="/chat/:conversationId" element={<ChatPage />} />
+        <Route path="/messages" element={
+          <ProtectedRoute>
+            <MessagesPage />
+          </ProtectedRoute>
+        } />
+        
       </Routes>
 
     </Router>
