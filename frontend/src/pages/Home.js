@@ -54,9 +54,15 @@ function Home() {
   }
 
   const filteredItems = items
-    .filter((item) =>
-      item.title.toLowerCase().includes(search.toLowerCase())
-    )
+    .filter((item) => {
+      const q = search.toLowerCase();
+      return (
+        item.title?.toLowerCase().includes(q) ||
+        item.description?.toLowerCase().includes(q) ||
+        item.category?.toLowerCase().includes(q) ||
+        item.location?.toLowerCase().includes(q)
+      );
+    })
     .filter((item) =>
       filter === "all" ? true : item.type === filter
     );
