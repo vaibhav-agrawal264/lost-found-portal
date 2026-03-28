@@ -42,11 +42,22 @@ export default function MessagesPage() {
         <div
           key={conv._id}
           onClick={() => navigate(`/chat/${conv._id}`)}
-          className="cursor-pointer border rounded p-4 mb-3 hover:bg-gray-50"
+          className="cursor-pointer border rounded p-4 mb-3 hover:bg-gray-50 flex justify-between items-center"
         >
-          <p>
-            <b>Item:</b> {conv.item?.title || "Untitled item"}
-          </p>
+          <div>
+            <p className="mb-1 text-lg">
+              <span className="font-bold text-gray-800">{conv.item?.title || "Untitled item"}</span>
+            </p>
+            <p className="text-sm text-gray-500">
+              <span className="font-semibold text-gray-600">Chat with:</span> {conv.otherUser || "Unknown User"}
+            </p>
+          </div>
+          
+          {conv.unreadCount > 0 && (
+            <span className="bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm ml-4">
+              {conv.unreadCount} New
+            </span>
+          )}
         </div>
       ))}
 

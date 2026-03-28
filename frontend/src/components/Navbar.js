@@ -65,7 +65,7 @@ function Navbar() {
       { withCredentials: true }
     );
 
-    window.location.reload();
+    window.location.href = "/login";
 
   };
 

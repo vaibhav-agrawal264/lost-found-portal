@@ -1,5 +1,6 @@
 const Conversation = require("../models/Conversation");
 const Item = require("../models/Item");
+const Message = require("../models/Message");
 
 exports.createOrGetConversation = async (req, res) => {
 
@@ -56,14 +57,30 @@ exports.createOrGetConversation = async (req, res) => {
 
 exports.getUserConversations = async (req, res) => {
   try {
-
     const userId = req.user.id;
 
     const conversations = await Conversation.find({
       participants: userId
     })
       .populate("item")
-      .populate("participants", "name email");
+      .populate("participants", "name email")
+      .lean();
+
+    // Attach unread counts and identifier for the other person
+    for (let conv of conversations) {
+      const unreadCount = await Message.countDocuments({
+        conversation: conv._id,
+        sender: { $ne: userId },
+        readBy: { $ne: userId }
+      });
+      conv.unreadCount = unreadCount;
+      
+      const otherPerson = conv.participants.find(p => p._id.toString() !== userId);
+      conv.otherUser = otherPerson ? otherPerson.name : "Unknown User";
+    }
+
+    // Sort by higher unread count first
+    conversations.sort((a, b) => b.unreadCount - a.unreadCount);
 
     res.json(conversations);
 
