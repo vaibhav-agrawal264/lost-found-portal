@@ -96,6 +96,10 @@ function Navbar() {
 
         {isAuthenticated && (
           <>
+            <Link to="/dashboard" className="text-gray-700 hover:text-blue-600">
+              Dashboard
+            </Link>
+
             <Link
               to="/messages"
               className="text-gray-700 hover:text-blue-600 relative"

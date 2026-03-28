@@ -8,6 +8,7 @@ import PostItem from "./pages/PostItem";
 import ItemDetail from "./pages/ItemDetail";
 import ChatPage from "./pages/ChatPage";
 import MessagesPage from "./pages/MessagesPage";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   return (
@@ -21,6 +22,9 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/post-item" element={<ProtectedRoute>
           <PostItem />
+        </ProtectedRoute>} />
+        <Route path="/dashboard" element={<ProtectedRoute>
+          <Dashboard />
         </ProtectedRoute>} />
         <Route path="/item/:id" element={<ItemDetail />} />
         <Route path="/chat/:conversationId" element={<ChatPage />} />

@@ -8,24 +8,34 @@ function Home() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const navigate = useNavigate();
 
   useEffect(() => {
 
     const fetchItems = async () => {
-
+      setLoadingMore(page > 1);
       try {
 
-        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/items/all`);
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/items/all?page=${page}&limit=9`);
 
-        setItems(res.data);
+        if (page === 1) {
+          setItems(res.data.items);
+        } else {
+          setItems(prev => [...prev, ...res.data.items]);
+        }
+        setTotalPages(res.data.totalPages);
         setLoading(false);
+        setLoadingMore(false);
 
       } catch (error) {
 
         console.log("Error fetching items");
         setLoading(false);
+        setLoadingMore(false);
 
       }
 
@@ -33,7 +43,7 @@ function Home() {
 
     fetchItems();
 
-  }, []);
+  }, [page]);
 
   if (loading) {
     return (
@@ -170,6 +180,19 @@ function Home() {
 
         </div>
 
+      )}
+
+      {/* Pagination Load More */}
+      {!loading && page < totalPages && (
+        <div className="text-center mt-10">
+          <button
+            onClick={() => setPage(page + 1)}
+            disabled={loadingMore}
+            className={`px-6 py-2 rounded shadow-md font-semibold ${loadingMore ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
+          >
+            {loadingMore ? "Loading..." : "Load More"}
+          </button>
+        </div>
       )}
 
     </div>

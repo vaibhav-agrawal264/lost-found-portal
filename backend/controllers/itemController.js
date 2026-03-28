@@ -52,11 +52,29 @@ exports.createItem = async (req, res) => {
 // Get all items
 exports.getAllItems = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 9;
+    const skip = (page - 1) * limit;
 
-    const items = await Item.find().sort({ createdAt: -1 });
+    const totalItems = await Item.countDocuments();
+    const totalPages = Math.ceil(totalItems / limit);
 
+    const items = await Item.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
+
+    res.json({
+      items,
+      totalPages,
+      currentPage: page
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.getMyItems = async (req, res) => {
+  try {
+    const items = await Item.find({ user: req.user.id }).sort({ createdAt: -1 });
     res.json(items);
-
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
