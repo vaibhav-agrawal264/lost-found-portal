@@ -9,9 +9,11 @@ function PostItem() {
   const [type, setType] = useState("lost");
   const [location, setLocation] = useState("");
   const [image, setImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     const formData = new FormData();
 
@@ -39,10 +41,13 @@ function PostItem() {
       );
 
       alert("Item posted successfully");
+      window.location.href = "/";
 
     } catch (error) {
       console.log(error);
       alert("Error posting item");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -105,9 +110,10 @@ function PostItem() {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition"
+            disabled={isLoading}
+            className={`w-full text-white p-2 rounded transition ${isLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
           >
-            Submit Item
+            {isLoading ? 'Submitting...' : 'Submit Item'}
           </button>
 
         </form>

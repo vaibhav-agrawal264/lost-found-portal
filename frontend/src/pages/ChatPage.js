@@ -11,6 +11,14 @@ function ChatPage() {
 
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
+  const [currentUserId, setCurrentUserId] = useState(null);
+
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/api/auth/check`, { withCredentials: true })
+      .then((res) => setCurrentUserId(res.data.userId))
+      .catch((err) => console.log(err));
+  }, []);
 
   const bottomRef = useRef();
 
@@ -107,19 +115,32 @@ function ChatPage() {
 
       <h2 className="text-2xl font-bold mb-6">Chat</h2>
 
-      <div className="border rounded p-4 h-96 overflow-y-scroll mb-4">
+      <div className="border rounded p-4 h-96 overflow-y-scroll mb-4 bg-gray-50 flex flex-col gap-3">
 
-        {messages.map((msg) => (
-
-          <div key={msg._id} className="mb-2">
-
-            <span className="font-semibold">{msg.sender?.name}</span>:
-
-            <span className="ml-2">{msg.text}</span>
-
-          </div>
-
-        ))}
+        {messages.map((msg) => {
+          const isMe = msg.sender?._id === currentUserId;
+          return (
+            <div
+              key={msg._id}
+              className={`flex w-full ${isMe ? "justify-end" : "justify-start"}`}
+            >
+              <div
+                className={`max-w-[75%] p-3 rounded-lg shadow-sm ${
+                  isMe
+                    ? "bg-blue-500 text-white rounded-br-none"
+                    : "bg-white text-gray-800 border rounded-bl-none"
+                }`}
+              >
+                {!isMe && (
+                  <p className="text-xs font-bold text-gray-700 mb-1">
+                    {msg.sender?.name}
+                  </p>
+                )}
+                <p className="break-words">{msg.text}</p>
+              </div>
+            </div>
+          );
+        })}
 
         {/* ✅ Scroll anchor */}
         <div ref={bottomRef}></div>
@@ -132,6 +153,7 @@ function ChatPage() {
           type="text"
           value={text}
           onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
           className="border p-2 flex-1 rounded"
           placeholder="Type a message..."
         />

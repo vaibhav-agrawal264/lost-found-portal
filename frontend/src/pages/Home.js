@@ -81,19 +81,19 @@ function Home() {
         </button>
 
         <button
-          onClick={() => setFilter("lost")}
-          className={`px-4 py-2 rounded ${filter === "lost" ? "bg-red-500 text-white" : "bg-red-200"
-            }`}
-        >
-          Lost
-        </button>
-
-        <button
           onClick={() => setFilter("found")}
           className={`px-4 py-2 rounded ${filter === "found" ? "bg-green-500 text-white" : "bg-green-200"
             }`}
         >
           Found
+        </button>
+
+        <button
+          onClick={() => setFilter("lost")}
+          className={`px-4 py-2 rounded ${filter === "lost" ? "bg-red-500 text-white" : "bg-red-200"
+            }`}
+        >
+          Lost
         </button>
 
       </div>

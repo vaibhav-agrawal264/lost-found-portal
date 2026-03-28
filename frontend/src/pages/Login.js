@@ -18,7 +18,7 @@ function Login() {
       );
 
       alert("Login successful");
-      window.location.reload();
+      window.location.href = '/';
 
     } catch (error) {
       alert("Login failed");
